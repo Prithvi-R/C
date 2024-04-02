@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define V 6 // Define the maximum number of vertices in the graph
+#define V 6 //Define the maximum number of vertices in the graph
 
-struct graph // declaring graph data structure
+struct graph //declaring graph data structure
 {
-    struct Node *point[V]; // An array of pointers to Node to represent an adjacency list
+    struct Node *point[V]; //An array of pointers to Node to represent an adjacency list
 };
 
-struct Node // declaring node
+struct Node //declaring node
 {
     int destination;
     struct Node *next;
@@ -60,7 +60,7 @@ void displayGraph(struct graph *graph) // function to view garph
 int main()
 {
     struct link edges[] =
-        {
+            {
             {0, 1}, {2,3},{1, 3}, {3, 0}, {3, 4}, {4, 5}, {5, 6}
 
         };
