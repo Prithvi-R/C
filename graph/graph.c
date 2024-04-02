@@ -41,7 +41,7 @@ struct graph *make_Graph(struct link edges[], int x) // function to create graph
     return graph;
 }
 
-void displayGraph(struct graph *graph) // function to view garph
+void displayGraph(struct graph *graph)// function to view garph
 {
     int i;
     for (i = 0; i < V; i++)
@@ -60,7 +60,7 @@ void displayGraph(struct graph *graph) // function to view garph
 int main()
 {
     struct link edges[] =
-            {
+        {
             {0, 1}, {2,3},{1, 3}, {3, 0}, {3, 4}, {4, 5}, {5, 6}
 
         };
