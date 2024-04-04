@@ -36,13 +36,12 @@ void printAdjMatrix(int arr[][V])
 
 unsigned int getbit(unsigned char *p, unsigned int i)
 {
-    // Corrected the mask shifting operation
     return ((*(p + (i / 8))) & (1 << (i % 8))) ? 1 : 0;
 }
 
 void setbit(unsigned char *pbit, int index)
 {
-    // Corrected the setting of the bit at the specified index
+    //Corrected the setting of the bit at the specified index
     pbit[index / 8] |= (1 << (index % 8));
 }
 

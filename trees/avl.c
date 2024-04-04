@@ -137,13 +137,34 @@ Tree balancedTree(Tree tree)
     {
         tree->height = 1 + max(height(tree->left), height(tree->right));
     }
-    // printf("PreOrder: ");
     return tree;
 }
+Tree balanceTree(Tree tree)
+{
+    int balanceFactor = balance(tree);
+    if (balanceFactor > 1 && balance(tree->left) >= 0) // LL
+        tree = rotateRight(tree);
+    else if (balanceFactor < -1 && balance(tree->right) <= 0) // RR
+        tree = rotateLeft(tree);
+    else if (balanceFactor > 1 && balance(tree->right) < 0)
+    { // LR
+        tree->left = rotateLeft(tree->left);
+        tree = rotateRight(tree);
+    }
+    else if (balanceFactor < -1 && balance(tree->left) > 0)
+    { // RL
+        tree->right = rotateRight(tree->right);
+        tree = rotateLeft(tree);
+    }
 
+    if (tree)
+    {
+        tree->height = 1 + max(height(tree->left), height(tree->right));
+    }
+    return tree;
+}
 Tree insertIntoAVL(Tree tree, Type key, Tree parent)
 {
-    // printf("0rder: ");
     if (!tree)
         return newTree(parent, key, NULL, NULL);
     if (key < tree->key)
@@ -260,7 +281,7 @@ Tree deleteTreeFromAVL(Tree tree, Type key)
         t->key = successor->key;
         t->right = deleteTreeFromAVL(t->right, successor->key);
     }
-    t = balancedTree(t);
+    t = balanceTree(t);
     return t;
 }
 Tree deleteNode(Tree tree, Type key)
