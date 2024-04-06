@@ -1,17 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define V 8
+#define V 9
 
 typedef int Type;
-typedef enum
-{
-    WHITE,
-    GREY,
-    BLACK
-} Color;
+typedef enum {WHITE, GREY, BLACK} Color;
 typedef struct node_t *Node;
 typedef struct graph_t *Graph;
+typedef struct queue_t *Queue;
+
+struct queue_t
+{
+    int front, rear;
+    unsigned int capacity, size;
+    Type *data;
+};
+
+Queue createQueue(int capacity)
+{
+    Queue queue = (Queue)calloc(1, sizeof(struct queue_t));
+    queue->capacity = capacity;
+    queue->size = 0;
+    queue->front = 0;
+    queue->rear = 0;
+    queue->data = calloc(capacity, sizeof(Type));
+    return queue;
+}
+
+int isFull(Queue queue)
+{
+    return (queue->capacity == queue->size);
+}
+
+int isEmpty(Queue queue)
+{
+    return (!queue->size);
+}
+
+int enqueue(Queue queue, Type data)
+{
+    if (queue->size == queue->capacity)
+        return 0;
+    queue->data[queue->rear] = data;
+    queue->rear = (queue->rear + 1) % queue->capacity;
+    queue->size++;
+    return 1;
+}
+
+int dequeue(Queue queue, Type *pdata)
+{
+    if (queue->size == 0)
+        return 0;
+    *pdata = queue->data[queue->front];
+    queue->front = (queue->front + 1) % queue->capacity;
+    queue->size--;
+    return 1;
+}
+int peek(Queue queue, Type *pdata)
+{
+    if (queue->size == 0)
+        return 0;
+    *pdata = queue->data[queue->front];
+    return 1;
+}
 
 struct graph_t
 {
@@ -53,10 +104,57 @@ Graph createGraph(Type adj[][V])
     return graph;
 }
 
-void breadthSearch(Graph graph){
-    
+int search(Graph graph, Type key)
+{
+    for (int i = 0; i < V; i++)
+    {
+        Node ptr = graph->point[i];
+        if (key == ptr->value)
+            return i;
+    }
+    return -1;
 }
 
+int breadthSearch(Graph graph, Type key,Type value)
+{
+    Queue q = createQueue(V);
+    int k = search(graph, key);
+    Node ptr = graph->point[k];
+    ptr->d = 0;
+    ptr->parent = NULL;
+    enqueue(q, ptr->value);
+    ptr->color = GREY;
+    while (!isEmpty(q))
+    {
+        peek(q, &k);
+        k = search(graph, k);
+        ptr = graph->point[k];
+        Node u = ptr;
+        
+        for (int i = 0; i < V; i++)
+        {
+            if (u->next[i])
+            {
+                ptr = u->next[i];
+                if (ptr->color == WHITE)
+                {
+                    enqueue(q, ptr->value);
+                    ptr->color = GREY;
+                    ptr->d = u->d + 1;
+                    ptr->parent = u;
+                    printf("(%d-->%d)%d  ", u->value, ptr->value, ptr->d);
+                    if(value==ptr->value)
+                        return ptr->d;
+                }
+            }
+        }
+        dequeue(q, &k);
+        k = search(graph, k);
+        graph->point[k]->color = BLACK;
+    }
+    free(q);
+    return -1;
+}
 
 void printGraph(Graph graph)
 {
@@ -67,7 +165,7 @@ void printGraph(Graph graph)
         for (int j = 0; j < V; j++)
         {
             if (node->next[j])
-                printf("(%d->%d)\t",node->value, node->next[j]->value);
+                printf("(%d->%d)\t", node->value, node->next[j]->value);
         }
         printf("\n");
     }
@@ -100,17 +198,25 @@ int main()
     addEdge(adj, 0, 1);
     addEdge(adj, 0, 3);
     addEdge(adj, 0, 8);
+    addEdge(adj, 4, 8);
     addEdge(adj, 1, 7);
     addEdge(adj, 2, 5);
     addEdge(adj, 2, 3);
     addEdge(adj, 3, 4);
-    addEdge(adj, 3, 4);
+    addEdge(adj, 2, 7);
     addEdge(adj, 5, 6);
-    printf("\nPrint using Matrix-Sized 2D-array:\n");
-    printAdjMatrix(adj);
-    printf("\nPrint using linked-Sized 2D-array:\n");
     Graph graph = createGraph(adj);
+    
+    // printf("\nPrint using Matrix-Sized 2D-array:\n");
+    // printAdjMatrix(adj);
+    // printf("\nPrint using linked-Sized 2D-array:\n");
     printGraph(graph);
 
+    int ke,va;
+    printf("Enter the value: ");
+    scanf("%d", &ke);
+    printf("Enter the end value: ");
+    scanf("%d", &va);  
+    printf("\nTotal Steps: %d",breadthSearch(graph, ke,va));
     return 0;
 }
