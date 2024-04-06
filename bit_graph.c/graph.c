@@ -8,6 +8,64 @@ typedef enum {WHITE, GREY, BLACK} Color;
 typedef struct node_t *Node;
 typedef struct graph_t *Graph;
 typedef struct queue_t *Queue;
+typedef struct truct_t *Stack;
+struct truct_t
+{
+    int front, rear;
+    unsigned int capacity, size;
+    Type *data;
+};
+
+Stack createStack()
+{
+    Stack stack=(Stack)calloc(1,sizeof(struct truct_t));
+    int capacity=V;
+    stack->capacity = capacity;
+    stack->size = 0;
+    stack->front = 0;
+    stack->rear = stack->front - 1;
+    stack->data = calloc(capacity, sizeof(Type));
+    return stack;
+}
+
+int isFullS(Stack stack)
+{
+    return (stack->capacity == stack->size);
+}
+int isEmptyS(Stack stack)
+{
+    return (!stack->size);
+}
+
+int push(Stack stack, Type data)
+{
+    int capacity=V;
+    if (stack->size == stack->capacity)
+        return 0;
+    stack->front++;
+    stack->rear++;
+    stack->data[stack->size] = data;
+    stack->size++;
+    return 1;
+}
+int pull(Stack stack, Type *pdata)
+{
+    if (stack->size == 0)
+        return 0;
+    stack->size--;
+    stack->front--;
+    stack->rear--;
+    *pdata = stack->data[stack->size];
+    return 1;
+}
+
+int peekStack(Stack stack, Type *pdata)
+{
+    if (stack->size == 0)
+        return 0;
+    *pdata = stack->data[stack->size - 1];
+    return 1;
+}
 
 struct queue_t
 {
@@ -27,12 +85,12 @@ Queue createQueue(int capacity)
     return queue;
 }
 
-int isFull(Queue queue)
+int isFullQ(Queue queue)
 {
     return (queue->capacity == queue->size);
 }
 
-int isEmpty(Queue queue)
+int isEmptyQ(Queue queue)
 {
     return (!queue->size);
 }
@@ -124,7 +182,7 @@ int breadthSearch(Graph graph, Type key,Type value)
     ptr->parent = NULL;
     enqueue(q, ptr->value);
     ptr->color = GREY;
-    while (!isEmpty(q))
+    while (!isEmptyQ(q))
     {
         peek(q, &k);
         k = search(graph, k);
@@ -153,6 +211,51 @@ int breadthSearch(Graph graph, Type key,Type value)
         graph->point[k]->color = BLACK;
     }
     free(q);
+    if(value==graph->point[k]->value)
+        return graph->point[k]->d;
+    return -1;
+}
+
+int depthSearch(Graph graph, Type key,Type value)
+{
+    Stack s = createStack();
+    int k = search(graph, key);
+    Node ptr = graph->point[k];
+    ptr->d = 0;
+    ptr->parent = NULL;
+    push(s, ptr->value);
+    ptr->color = GREY;
+    while (!isEmptyS(s))
+    {
+        peekStack(s, &k);
+        k = search(graph, k);
+        ptr = graph->point[k];
+        Node u = ptr;
+        
+        for (int i = 0; i < V; i++)
+        {
+            if (u->next[i])
+            {
+                ptr = u->next[i];
+                if (ptr->color == WHITE)
+                {
+                    push(s, ptr->value);
+                    ptr->color = GREY;
+                    ptr->d = u->d + 1;
+                    ptr->parent = u;
+                    printf("(%d-->%d)%d  ", u->value, ptr->value, ptr->d);
+                    if(value==ptr->value)
+                        return ptr->d;
+                }
+            }
+        }
+        pull(s, &k);
+        k = search(graph, k);
+        graph->point[k]->color = BLACK;
+    }
+    free(s);
+    if(value==graph->point[k]->value)
+        return graph->point[k]->d;
     return -1;
 }
 
@@ -217,6 +320,6 @@ int main()
     scanf("%d", &ke);
     printf("Enter the end value: ");
     scanf("%d", &va);  
-    printf("\nTotal Steps: %d",breadthSearch(graph, ke,va));
+    printf("\nTotal Steps: %d",depthSearch(graph, ke,va));
     return 0;
 }
