@@ -296,8 +296,18 @@ void printAdjMatrix(Type arr[][V])
 
 int main()
 {
-
+    
     Type adj[V][V] = {0};
+    // Type source,destination;
+    // int n,i;
+    // printf("Enter number of edge you want to add: ");
+    // scanf("%d",&n);
+
+    // for(i=0;i<n;i++){
+    //     printf("Enter the edge {source destination}; ");
+    //     scanf("%d %d",&source,&destination);
+    //     addEdge(adj,source,destination);
+    // }
     addEdge(adj, 0, 1);
     addEdge(adj, 0, 3);
     addEdge(adj, 0, 8);
