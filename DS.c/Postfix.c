@@ -103,7 +103,7 @@ Type *convert(Type arr[], int n)
             {
                 pop(stack, &postfix[postfixIndex++]);
             }
-            pop(stack, &k); //Discard '('
+            pop(stack, &postfix[postfixIndex++]); //Discard '('
         }
         else
         {
@@ -122,6 +122,8 @@ Type *convert(Type arr[], int n)
     printf("Postfix expression: ");
     for (int i = 0; i < postfixIndex; i++)
     {
+        if(postfix[i]=='(')
+            continue;
         printf("%c", postfix[i]);
     }
     printf("\n");
@@ -137,7 +139,7 @@ int main()
     scanf(" %[^\n]s", arr);
     int n = strlen(arr);
     arr = convert(arr, n);
-    printf("Postfix expression: %s\n", arr);
+    // printf("Postfix expression: %s\n", arr);
     free(arr); 
     return 0;
 }
