@@ -5,15 +5,17 @@ int main()
     int a[] = {1, 10, 2, 0, 4, 6, 3};
     int n = 7;
     int i, j,key;
-    for (i = 0; i < n; i++)
+    for (i = 0; i < n-1; i++)
     {
-        key=a[i];
-        j=i-1;
-        while(j>=0 && a[j]>key){
-            a[j+1]=a[j];
-            j--;
+        for(int j=i+1;j>0;j--){
+            if(a[j-1]>=a[j]){
+                int temp=a[j-1];
+                a[j-1]=a[j];
+                a[j]=temp;
+            }else{
+                break;
+            }
         }
-        a[j+1]=key;
     }
     for ( i = 0; i < n; i++)
     {
